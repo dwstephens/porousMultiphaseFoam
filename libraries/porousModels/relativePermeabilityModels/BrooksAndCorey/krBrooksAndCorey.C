@@ -91,7 +91,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0)
+        dimensionedScalar("n",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0))
     ),
     Se_((Sb_-Smin_)/(Smax_-Smin_)),
     kramax_
@@ -105,7 +105,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     ),
     krbmax_
     (
@@ -118,9 +118,10 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     )
 {
+
     if (gMin(n_) <= 0)
     {
         FatalErrorIn
@@ -130,7 +131,24 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             << "Relative permeability coefficient n equal or less than 0" 
                 << exit(FatalError);
     }
-
+ 
+    Info << "Brooks and Corey parameters for relative permeability model" << nl << "{" << endl;
+    Info << "    n ";
+    if (n_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(n_).value() << endl;}
+    Info << "    Smax ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
+    Info <<  "    Smin ";
+    if (Smin_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smin_).value() << endl;}
+    Info << "    kramax ";
+    if (kramax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(kramax_).value() << endl;}
+    Info << "    krbmax ";
+    if (krbmax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(krbmax_).value() << endl;}
+    Info << "} \n" << endl;
 }
 
 // ************************************************************************* //
